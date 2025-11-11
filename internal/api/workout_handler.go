@@ -25,7 +25,7 @@ func (wh *WorkOutHandler) HandleGetWorkOutById(w http.ResponseWriter, r *http.Re
 		http.NotFound(w, r)
 	}
 
-	fmt.Fprintf(w, "The workout ID is: %d", id)
+	fmt.Fprintf(w, "The workout ID is: %d\n", id)
 }
 
 func (wh *WorkOutHandler) HandleCreateWorkOut(w http.ResponseWriter, r *http.Request) {
