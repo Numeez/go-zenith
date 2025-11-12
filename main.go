@@ -18,6 +18,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer application.DB.Close()
 	http.HandleFunc("/health", application.HealthCheck)
 	r := router.SetupRoutes(application)
 	server := &http.Server{
