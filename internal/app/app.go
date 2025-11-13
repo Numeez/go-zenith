@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/Numeez/go-zenith/internal/api"
+	"github.com/Numeez/go-zenith/internal/middleware"
 	"github.com/Numeez/go-zenith/internal/store"
 	"github.com/Numeez/go-zenith/migrations"
 )
@@ -16,6 +17,8 @@ type Application struct {
 	Logger         *log.Logger
 	WorkOutHandler *api.WorkOutHandler
 	UserHandler    *api.UserHandler
+	TokenHandler   *api.TokenHandler
+	Middleware     middleware.UserMiddleware
 	DB             *sql.DB
 }
 
@@ -32,12 +35,19 @@ func NewApplication() (*Application, error) {
 	}
 	workoutStore := store.NewPostgresWorkoutStore(db)
 	userStore := store.NewPostgresUserStore(db)
+	tokenStore := store.NewPostgresTokenStore(db)
 	workOutHandler := api.NewWorkOutHandler(workoutStore, logger)
 	userHandler := api.NewUserHandler(userStore, logger)
+	tokenHandler := api.NewTokenHandler(tokenStore, userStore, logger)
+	userMiddleWare := middleware.UserMiddleware{
+		UserStore: userStore,
+	}
 	return &Application{
 		Logger:         logger,
 		WorkOutHandler: workOutHandler,
 		UserHandler:    userHandler,
+		TokenHandler:   tokenHandler,
+		Middleware:     userMiddleWare,
 		DB:             db,
 	}, nil
 }
